@@ -87,15 +87,6 @@ services:
       IOTA_CB_NGSI_VERSION: v2
       IOTA_MONGO_HOST: mongo-db-fiware
 
-# KEYCLOAK
-#  keycloak:
-#    image: quay.io/keycloak/keycloak
-#    environment:
-#      - KEYCLOAK_ADMIN=admin
-#      - KEYCLOAK_ADMIN_PASSWORD=admin123
-#      - KC_DB=dev-file
-#    command: start-dev
-
 # STH-COMET (Short Term History) - CONFIGURAÇÃO CORRIGIDA
   sth-comet:
     image: fiware/sth-comet
@@ -184,6 +175,15 @@ services:
     restart: unless-stopped
     volumes:
       - ~/volumes-docker/prometheus.yml:/etc/prometheus/prometheus.yml
+
+# KEYCLOAK
+#  keycloak:
+#    image: quay.io/keycloak/keycloak
+#    environment:
+#      - KEYCLOAK_ADMIN=admin
+#      - KEYCLOAK_ADMIN_PASSWORD=admin123
+#      - KC_DB=dev-file
+#    command: start-dev
 
 networks:
   default:
