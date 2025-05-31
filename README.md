@@ -2,36 +2,62 @@
 
 # Projeto Fiware Stack | Tópicos Avançados em Engenharia de Software I | PPGTI
 
-# Serviços:
+# Serviços provisionados: 
+  
 
-  FIWARE Short Time Historic (STH) - Comet -> http://HostIP/comet
-  
-  FIWARE Cygnus (PORTA 5080)               -> http://HostIP/cygnus5080
-  FIWARE Cygnus (PORTA 5051)               -> http://HostIP/cygnus5051
-  
-  FIWARE Orion Context Broker              -> http://HostIP/orion
+  # Short Time Historic (STH) - Comet
 
-# Visualização de Dados:  
-  
-  WireCloud                                -> http://HostIP
-  
-  Obs.: Concluir configuração de acordo com a documentação -> https://wirecloud.readthedocs.io/en/stable/installation_guide/#database-population)
-  
-  Grafana                                  -> http://HostIP:3000
+  http://dominio.exemplo:55080/sth-comet/version
 
-# Demais ferramentas:
+  https://dominio.exemplo:55443/sth-comet/version
+
+
+  # Quantum Leap:
+
+  http://dominio.exemplo:55080/quantumleap/version
+
+  https://dominio.exemplo:55443/quantumleap/version
+
+  
+  # Cygnus
+
+  http://dominio.exemplo:55080/cygnus5080/
+
+  https://dominio.exemplo:55443/cygnus5080/
+
+  http://dominio.exemplo:55080/cygnus5051/
+
+  https://dominio.exemplo:55443/cygnus5051/
+
+
+  # IoT Agent:
+
+  http://dominio.exemplo:55080/iotagent/version
+
+  https://dominio.exemplo:55443/iotagent/version
+
+  http://dominio.exemplo:55080/iotagent/ultralight/
+  
+  https://dominio.exemplo:55443/iotagent/ultralight/
+    
+  
+  # Orion Context Broker:
+
+  http://dominio.exemplo:55080/orion/version
+  
+  https://dominio.exemplo:55443/orion/version
+
+
+  # Visualização de Dados:
+  
+  
+  # Grafana:
+
+  https://dominio.exemplo:55443/
+
+  
+  # Demais ferramentas:
 
   NGINX
   
-  Obs.: Na primeira inicialização, o Docker criará o volume persistente do NGINX com um subdiretório 'nginx.conf'. É preciso excluir o subdiretório 'nginx.conf' e copiar o arquivo 'nginx.conf' deste repositório para o diretório '~/volumes-docker/nginx/'.
-  
-  Postgres
-  
-  MongoDB
-  
-  Elasticsearch
-  
-  Memcached
-
-  *KeyCloak (Pendente)
-
+  KeyCloak (Pendente)
