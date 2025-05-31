@@ -1,0 +1,67 @@
+SUBSCRIÇÃO:
+
+curl -X POST "http://200.159.254.119:55080/orion/v2/subscriptions" \
+  -H "Content-Type: application/json" \
+  -H "Fiware-Service: meuservico" \
+  -H "Fiware-ServicePath: /sensores" \
+  -d '{
+    "description": "Subscrição STH-Comet final",
+    "subject": {
+      "entities": [{"id":"sensor001","type":"TemperatureSensor"}],
+      "condition": {"attrs": ["temperature"]}
+    },
+    "notification": {
+      "http": {"url": "http://sth-comet:8666/notify"},
+      "attrs": ["temperature"],
+      "metadata": ["dateCreated","dateModified"],
+      "attrsFormat": "normalized"
+    },
+    "expires": "2026-05-30T14:00:00.00Z"
+  }'
+
+
+-----------------------------------------------------
+
+ENTIDADE:
+
+curl -X POST http://200.159.254.119:55080/orion/v2/entities \
+  -H "Content-Type: application/json" \
+  -H "Fiware-Service: meuservico" \
+  -H "Fiware-ServicePath: /sensores" \
+  -d '{
+    "id": "sensor001",
+    "type": "TemperatureSensor",
+    "temperature": {
+      "type": "Number",
+      "value": 25.5,
+      "metadata": {
+        "timestamp": {
+          "type": "DateTime",
+          "value": "'$(date -u +"%Y-%m-%dT%H:%M:%SZ")'"
+        },
+        "unit": {
+          "type": "Text",
+          "value": "Celsius"
+        }
+      }
+    },
+    "location": {
+      "type": "geo:point",
+      "value": "-5.795, -35.209"
+    },
+    "name": {
+      "type": "Text",
+      "value": "Sensor Temperatura Lab 1"
+    }
+  }'
+
+
+-----------------------------------------------------
+
+ATUALIZAR VALOR DA ENTIDADE:
+
+curl -X PATCH "http://200.159.254.119:55080/orion/v2/entities/sensor001/attrs" \
+  -H "Fiware-Service: meuservico" \
+  -H "Fiware-ServicePath: /sensores" \
+  -H "Content-Type: application/json" \
+  -d '{"temperature":{"type":"Number","value":27.0}}'

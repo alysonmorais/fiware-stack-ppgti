@@ -1,0 +1,330 @@
+# CRIAR SUBSCRIÇÃO:
+
+
+curl -X POST "http://200.159.254.119:55080/orion/v2/subscriptions" \
+-H "Content-Type: application/json" \
+-H "Fiware-Service: meuservico" \
+-H "Fiware-ServicePath: /sensores" \
+-d '{
+  "description": "Subscription to persist temperature, humidity, and energyConsumption data in STH-Comet",
+  "subject": {
+    "entities": [
+      {
+        "id": "Sensor001",
+        "type": "Sensor"
+      }
+    ],
+    "condition": {
+      "attrs": ["temperature", "humidity", "energyConsumption"],
+      "notifyOnMetadataChange": true
+    }
+  },
+  "notification": {
+    "httpCustom": {
+      "url": "http://sth-comet:8666/notify",
+      "headers": {
+        "Fiware-Service": "meuservico",
+        "Fiware-ServicePath": "/sensores"
+      }
+    },
+    "attrs": ["temperature", "humidity", "energyConsumption"],
+    "metadata": ["dateCreated", "dateModified"]
+  },
+  "expires": "2026-05-30T14:00:00.000Z",
+  "throttling": 0
+}'
+
+
+
+------------------------------------------------------------------------
+------------------------------------------------------------------------
+
+
+# CRIAR ENTIDADE:
+
+curl -X POST "http://200.159.254.119:55080/orion/v2/entities" \
+-H "Content-Type: application/json" \
+-H "Fiware-Service: meuservico" \
+-H "Fiware-ServicePath: /sensores" \
+-d '{
+  "id": "Sensor001",
+  "type": "Sensor",
+  "temperature": {
+    "value": 17.7,
+    "type": "Float"
+  }
+}'
+
+
+Obs.: as outras métricas foram adicionadas depois:
+
+curl -X POST "http://200.159.254.119:55080/orion/v2/entities/Sensor001/attrs" \
+-H "Content-Type: application/json" \
+-H "Fiware-Service: meuservico" \
+-H "Fiware-ServicePath: /sensores" \
+-d '{
+  "humidity": {
+    "value": 46.1,
+    "type": "Float"
+  },
+  "energyConsumption": {
+    "value": 115.9,
+    "type": "Float"
+  }
+}'
+
+------------------------------------------------------------------------
+------------------------------------------------------------------------
+
+
+# ATUALIZAR ENTIDADE:
+
+
+curl -X PATCH "http://200.159.254.119:55080/orion/v2/entities/Sensor001/attrs" \
+-H "Content-Type: application/json" \
+-H "Fiware-Service: meuservico" \
+-H "Fiware-ServicePath: /sensores" \
+-d '{
+  "temperature": {
+    "value": 22.0,
+    "type": "Float"
+  },
+  "humidity": {
+    "value": 75.4,
+    "type": "Float"
+  },
+  "energyConsumption": {
+    "value": 250.90,
+    "type": "Float"
+  }
+}'
+
+
+------------------------------------------------------------------------
+------------------------------------------------------------------------
+
+
+# TESTAR CONECXÃO:
+
+curl -X GET "http://200.159.254.119:55080/orion/v2/entities/Sensor001?type=Sensor" \
+-H "Fiware-Service: meuservico" \
+-H "Fiware-ServicePath: /sensores"
+
+
+------------------------------------------------------------------------
+------------------------------------------------------------------------
+
+
+# LISTAR ENTIDADE:
+
+
+curl -s -X GET "http://200.159.254.119:55080/orion/v2/entities" \
+     -H "Accept: application/json"
+
+
+# De end-point específico:
+
+curl -s -X GET "http://200.159.254.119:55080/orion/v2/entities" \
+-H "Accept: application/json" \
+-H "Fiware-Service: meuservico" \
+-H "Fiware-ServicePath: /sensores"
+
+
+------------------------------------------------------------------------
+------------------------------------------------------------------------
+
+
+# APAGAR ENTIDADE:
+
+curl -i -X DELETE "http://200.159.254.119:55080/orion/v2/entities/<entityId>" \
+     -H "Accept: application/json"
+
+
+------------------------------------------------------------------------
+------------------------------------------------------------------------
+
+
+# LISTAR SUBSCRIPTION:
+
+curl -s -X GET "http://200.159.254.119:55080/orion/v2/subscriptions" \
+     -H "Accept: application/json"
+
+
+# De end-point específico:
+
+curl -s -X GET "http://200.159.254.119:55080/orion/v2/subscriptions" \
+-H "Accept: application/json" \
+-H "Fiware-Service: meuservico" \
+
+
+------------------------------------------------------------------------
+------------------------------------------------------------------------
+
+
+# APAGAR SUBSCRIPTION:
+
+curl -i -X DELETE "http://200.159.254.119:55080/orion/v2/subscriptions/<subscriptionId>" \
+     -H "Accept: application/json"
+
+
+------------------------------------------------------------------------
+------------------------------------------------------------------------
+
+
+# VERIFICAR MONGODB:
+
+sudo docker exec -it mongo-db-fiware mongo
+MongoDB shell version v4.4.29
+connecting to: mongodb://127.0.0.1:27017/?compressors=disabled&gssapiServiceName=mongodb
+Implicit session: session { "id" : UUID("07a3b5ce-225a-49cc-9108-869040f36543") }
+MongoDB server version: 4.4.29
+---
+The server generated these startup warnings when booting:
+        2025-05-27T02:44:24.533+00:00: Using the XFS filesystem is strongly recommended with the WiredTiger storage engine. See http://dochub.mongodb.org/core/prodnotes-filesystem
+        2025-05-27T02:44:26.503+00:00: Access control is not enabled for the database. Read and write access to data and configuration is unrestricted
+---
+> show dbs
+admin                   0.000GB
+config                  0.000GB
+iotagent                0.000GB
+local                   0.000GB
+orion                   0.000GB
+orion-flights           0.000GB
+orion-meuservico        0.000GB
+orion-precipitation     0.000GB
+orion-rain              0.000GB
+orion-relativehumidity  0.000GB
+orion-temperature       0.000GB
+> use orion-meuservico
+switched to db orion-meuservico
+> show collections
+csubs
+entities
+> db.getCollection("entities").find().sort({recvTime: -1}).limit(5).pretty()
+{
+        "_id" : {
+                "id" : "Sensor001",
+                "type" : "Sensor",
+                "servicePath" : "/sensores"
+        },
+        "attrNames" : [
+                "temperature",
+                "humidity",
+                "energyConsumption"
+        ],
+        "attrs" : {
+                "temperature" : {
+                        "value" : 22,
+                        "type" : "Float",
+                        "creDate" : 1748632802.435037,
+                        "modDate" : 1748654406.1322281,
+                        "mdNames" : [ ]
+                },
+                "energyConsumption" : {
+                        "creDate" : 1748653859.7209606,
+                        "mdNames" : [ ],
+                        "modDate" : 1748654406.1322417,
+                        "type" : "Float",
+                        "value" : 250.9
+                },
+                "humidity" : {
+                        "creDate" : 1748653859.7209551,
+                        "mdNames" : [ ],
+                        "modDate" : 1748654406.1322362,
+                        "type" : "Float",
+                        "value" : 75.4
+                }
+        },
+        "creDate" : 1748632802.435037,
+        "modDate" : 1748654406.1322522,
+        "lastCorrelator" : "62a0ee80-3dbd-11f0-8374-bec3ea8f7753"
+}
+>
+
+------------------------------------------------------------------------
+------------------------------------------------------------------------
+
+# CONSULTA PELO NAVEGADOR:
+
+http://200.159.254.119:55080/orion/v2/entities/Sensor001?type=Sensor&fiware-service=meuservico&fiware-servicepath=/sensores
+
+extensão Modheader no Chrome:
+- Fiware-Service: meuservico
+- Fiware-ServicePath: /sensores
+
+
+------------------------------------------------------------------------
+------------------------------------------------------------------------
+
+
+# SCRIPT PARA ENVIO CONTÍNUO ALEATÓRIO DE DADOS:
+
+#!/bin/bash
+
+ORION_URL="http://localhost:80/orion/v2/entities/Sensor001/attrs"
+FIWARE_SERVICE="meuservico"
+FIWARE_SERVICEPATH="/sensores"
+
+while true; do
+  # Gera valores aleatórios em faixas realistas
+  temperature=$(awk -v r=$RANDOM 'BEGIN {printf "%.1f", 15 + (10 * (r/32767))}')        # 15.0 ~ 25.0
+  humidity=$(awk -v r=$RANDOM 'BEGIN {printf "%.1f", 40 + (60 * (r/32767))}')           # 40.0 ~ 100.0
+  energyConsumption=$(awk -v r=$RANDOM 'BEGIN {printf "%.2f", 100 + (200 * (r/32767))}') # 100.00 ~ 300.00
+
+  curl -s -X PATCH "$ORION_URL" \
+    -H "Content-Type: application/json" \
+    -H "Fiware-Service: $FIWARE_SERVICE" \
+    -H "Fiware-ServicePath: $FIWARE_SERVICEPATH" \
+    -d "{
+      \"temperature\": { \"value\": $temperature, \"type\": \"Float\" },
+      \"humidity\": { \"value\": $humidity, \"type\": \"Float\" },
+      \"energyConsumption\": { \"value\": $energyConsumption, \"type\": \"Float\" }
+    }"
+
+  echo "Enviado: temp=$temperature, hum=$humidity, energy=$energyConsumption"
+  sleep 10
+done
+
+
+#EXECITAR E PARAR (como root):
+nohup bash simula_sensor.sh > simula_sensor.log 2>&1 &
+pkill -f simula_sensor.sh
+
+
+------------------------------------------------------------------------
+------------------------------------------------------------------------
+
+
+# CONFIGURAÇÃO DE DASHBOARD NO GRAFANA:
+
+
+- Download do plugin: https://github.com/meln5674/grafana-mongodb-community-plugin
+- Descompacta os arquivos em: ~/volumes-docker/grafana_storage/plugins/meln5674-mongodb-community
+
+# Adição no docker compose:
+environment:
+      - GF_PLUGINS_ALLOW_LOADING_UNSIGNED_PLUGINS=meln5674-mongodb-community
+	  
+# No dashboard do Grafana:
+- Data source: meln5674-mongodb-community
+- Database.Collection: orion-meuservico.entities
+- QueryType: Table
+- Value Fields: temperature:float
+- Aggregation:
+[
+  {
+    "$match": {
+      "attrs.temperature.modDate": { "$exists": true }
+    }
+  },
+  {
+    "$project": {
+      "_id": 0,
+      "timestamp": { "$toLong": "$attrs.temperature.modDate" },
+      "temperature": "$attrs.temperature.value"
+    }
+  },
+  {
+    "$sort": { "timestamp": -1 }
+  }
+]
