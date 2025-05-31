@@ -1,9 +1,6 @@
 # fiware-stack-ppgti
 
-Projeto Fiware Stack | Tópicos Avançados em Engenharia de Software I | PPGTI
-
-# PPGTI - Projeto Engenharia de Software
-# Laboratório de infraestrutura FIWARE
+# Projeto Fiware Stack | Tópicos Avançados em Engenharia de Software I | PPGTI
 
 # Serviços:
 
