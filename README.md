@@ -69,9 +69,14 @@
 
   https://dominio.exemplo:55443/
 
+  https://github.com/meln5674/grafana-mongodb-community-plugin
+
   
-  # Demais ferramentas:
+  # API Gateway:
 
   NGINX
+
+  # Autenticação e Autorização
   
-  KeyCloak (Pendente)
+  *KeyCloak (Pendente)
+  https://www.keycloak.org/
